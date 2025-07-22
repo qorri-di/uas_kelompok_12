@@ -1,7 +1,5 @@
-flask~=3.0.3
+flask
 flask-mysqldb
-python-dotenv~=1.0.1
-requests~=2.32.4
-werkzeug~=3.0.6
-python-telegram-bot~=21.6
-mysqlclient~=2.2.0
+python-dotenv
+requests
+python-telegram-bot
