@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-4 text-center">Masukkan OTP</h2>
+
+    {% if error %}
+    <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    {% if message %}
+    <div class="bg-green-100 text-green-700 px-4 py-2 rounded mb-4">
+        {{ message }}
+    </div>
+    {% endif %}
+
+    {% if not otp_expired %}
+    <form method="post">
+        <input type="text" name="otp" placeholder="Kode OTP" class="w-full p-3 mb-4 border rounded" required>
+        <button type="submit" class="bg-indigo-600 text-white w-full py-2 rounded hover:bg-indigo-700">Verifikasi OTP</button>
+    </form>
+    {% endif %}
+
+    {% if otp_expired %}
+    <form method="post" action="/resend-otp" class="mt-4 text-center">
+        <button type="submit" class="text-blue-600 hover:underline text-sm">Kirim ulang kode OTP</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}
