@@ -1,7 +1,10 @@
+import asyncio
 import os
-
 from flask import Flask
 from app.config.database import init_mysql
+from app.config.telegram import WEBHOOK_URL
+from app.services.telegram_service import app_bot, run_telegram_bot
+
 
 def create_app():
     app = Flask(__name__)
@@ -11,9 +14,19 @@ def create_app():
     init_mysql(app)
 
     # Import dan register blueprint lainnya
-    from app.routes import auth, dashboard, webhook
+    from app.routes import auth, dashboard, otp, webhook
     app.register_blueprint(auth.auth_bp)
     app.register_blueprint(dashboard.dashboard_bp)
+    app.register_blueprint(otp.otp_bp)
     app.register_blueprint(webhook.webhook_bp)
+
+    # Atur handler Telegram
+    run_telegram_bot()
+
+    # Set webhook Telegram
+    async def set_webhook():
+        await app_bot.bot.set_webhook(url=WEBHOOK_URL)
+
+    asyncio.run(set_webhook())
 
     return app
