@@ -1,10 +1,6 @@
-def auth():
-    return None
+from .auth import auth_bp
+from .dashboard import dashboard_bp
+from .otp import otp_bp
+from .webhook import webhook_bp
 
-
-def dashboard():
-    return None
-
-
-def webhook():
-    return None
+__all__ = ['auth_bp', 'dashboard_bp', 'auth_bp', 'webhook_bp']
