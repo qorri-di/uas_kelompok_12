@@ -1,4 +1,5 @@
 from random import random
+import MySQLdb.cursors
 from flask import current_app
 from app.config.database import mysql
 from datetime import datetime
@@ -26,19 +27,19 @@ def create_user(username, email, phone, password, telegram_id, chat_id=None):
 
 def get_user_by_id(user_id):
     try:
-        cur = mysql.connection.cursor()
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))
         user = cur.fetchone()
         cur.close()
         return user
     except Exception as e:
-        current_app.logger.error(f"Gagal mengambil user berdasarkan ID: {e}")
+        current_app.logger.error(f"Gagal mengambil user berdasarkan UserId: {e}")
         return None
 
 
 def get_user_by_username(username):
     try:
-        cur = mysql.connection.cursor()
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cur.execute("SELECT * FROM users WHERE username = %s", (username,))
         user = cur.fetchone()
         cur.close()
@@ -48,27 +49,27 @@ def get_user_by_username(username):
         return None
 
 
-def get_user_by_email(telegram_id):
+def get_user_by_telegram(telegram_id):
     try:
-        cur = mysql.connection.cursor()
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cur.execute("SELECT * FROM users WHERE telegram_id = %s", (telegram_id,))
         user = cur.fetchone()
         cur.close()
         return user
     except Exception as e:
-        current_app.logger.error(f"Gagal mengambil user berdasarkan username: {e}")
+        current_app.logger.error(f"Gagal mengambil user berdasarkan telegram: {e}")
         return None
 
 
 def get_user_by_email(email):
     try:
-        cur = mysql.connection.cursor()
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cur.execute("SELECT * FROM users WHERE email = %s", (email,))
         user = cur.fetchone()
         cur.close()
         return user
     except Exception as e:
-        current_app.logger.error(f"Gagal mengambil user berdasarkan username: {e}")
+        current_app.logger.error(f"Gagal mengambil user berdasarkan email: {e}")
         return None
 
 
