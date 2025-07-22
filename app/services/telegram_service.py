@@ -1,7 +1,7 @@
 import asyncio
 from telegram import Update, Bot
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
-from app.config.telegram import TELEGRAM_BOT_TOKEN, WEBHOOK_ENDPOINT
+from app.config.telegram import TELEGRAM_BOT_TOKEN
 from app.services.user_service import update_user_chat_id
 
 app_bot = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
@@ -28,5 +28,7 @@ async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Fungsi menjalankan polling
 def run_telegram_bot():
+    asyncio.set_event_loop(asyncio.new_event_loop())
     app_bot.add_handler(CommandHandler("start", start_handler))
+    app_bot.run_polling()
 
