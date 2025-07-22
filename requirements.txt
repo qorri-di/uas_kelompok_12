@@ -1,0 +1,6 @@
+flask~=3.0.3
+flask-mysqldb
+python-dotenv
+pyTelegramBotAPI
+requests
+werkzeug~=3.0.6
