@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, session, flash
-from werkzeug.security import generate_password_hash, check_password_hash
-from app.services.user_service import create_user, get_user_by_username
-from app.services.otp_service import generate_and_send_otp
+from app.services.telegram_service import send_telegram_otp
+from app.services.user_service import create_user, get_user_by_username, check_password
+from app.services.otp_service import generate_otp, otp_expiry, save_otp
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -9,25 +9,14 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        telegram_username = request.form.get('telegram_username')
-
-        if not username or not password or not telegram_username:
-            flash('Semua kolom wajib diisi.', 'error')
-            return redirect('/register')
-
-        existing_user = get_user_by_username(username)
-        if existing_user:
-            flash('Username sudah terdaftar.', 'error')
-            return redirect('/register')
-
-        hashed_password = generate_password_hash(password)
-        create_user(username, hashed_password, telegram_username)
-        flash('Pendaftaran berhasil. Silakan login.', 'success')
+        username = request.form['username']
+        email = request.form['email']
+        phone = request.form['phone']
+        password = request.form['password']
+        telegram_chat_id = request.form['telegram']
+        create_user(username, email, phone, password, telegram_chat_id)
         return redirect('/')
-
-    return render_template('register.html', title='Register')
+    return redirect('/register')
 
 
 @auth_bp.route('/', methods=['GET'])
@@ -35,31 +24,27 @@ def login():
     return render_template('login.html')
 
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
-def login():
+@auth_bp.route('/login', methods=['POST'])
+def login_redirect():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
+        username = request.form['username']
+        password = request.form['password']
 
         user = get_user_by_username(username)
-        if not user or not check_password_hash(user['password'], password):
-            error = "Username atau password salah."
-            flash('Username atau password salah.', 'error')
-            return redirect('/login')
 
-        session['otp_user_id'] = user['id']
-        session['otp_expired'] = False
+        if user and check_password(user['password_hash'], password):
+            otp = generate_otp()
+            expires_at = otp_expiry()
 
-        # Kirim OTP via Telegram
-        otp_success = generate_and_send_otp(user['id'], user['chat_id'])
-        if otp_success:
-            flash('Kode OTP telah dikirim ke Telegram Anda.', 'info')
+            session['otp_user_id'] = user['id']
+            session['otp_expired'] = False
+
+            save_otp(user['id'], otp, expires_at)
+            send_telegram_otp(user['chat_id'], otp)
+            return redirect('/otp')
         else:
-            flash('Gagal mengirim OTP.', 'error')
-
-        return redirect('/otp')
-
-    return render_template('login.html')
+            error = "Username atau password salah."
+            return render_template('login.html', error=error)
 
 
 @auth_bp.route('/logout')
