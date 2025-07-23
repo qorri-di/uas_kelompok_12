@@ -18,6 +18,7 @@ CREATE TABLE `otp_tokens` (
     `otp_code` varchar(6) DEFAULT NULL,
     `expires_at` datetime DEFAULT NULL,
     `is_used` tinyint(1) DEFAULT '0',
+    `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     KEY `user_id` (`user_id`),
     CONSTRAINT `otp_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
