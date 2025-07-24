@@ -10,4 +10,4 @@ if __name__ == '__main__':
     bot_thread = threading.Thread(target=run_telegram_bot, daemon=True)
     bot_thread.start()
 
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
