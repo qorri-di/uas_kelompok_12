@@ -15,17 +15,9 @@
     </div>
     {% endif %}
 
-    {% if not otp_expired %}
     <form method="post">
         <input type="text" name="otp" placeholder="Kode OTP" class="w-full p-3 mb-4 border rounded" required>
         <button type="submit" class="bg-indigo-600 text-white w-full py-2 rounded hover:bg-indigo-700">Verifikasi OTP</button>
     </form>
-    {% endif %}
-
-    {% if otp_expired %}
-    <form method="post" action="/resend-otp" class="mt-4 text-center">
-        <button type="submit" class="text-blue-600 hover:underline text-sm">Kirim ulang kode OTP</button>
-    </form>
-    {% endif %}
 </div>
 {% endblock %}
