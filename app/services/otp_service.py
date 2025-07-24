@@ -33,7 +33,7 @@ def check_otp(user_id):
     """Ambil OTP aktif berdasarkan user"""
     try:
         cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cur.execute("SELECT * FROM otp_tokens WHERE user_id = %s AND is_used = FALSE ORDER BY created_at DESC LIMIT 1",
+        cur.execute("SELECT * FROM otp_tokens WHERE user_id = %s AND is_used = FALSE ORDER BY id DESC LIMIT 1",
                     (user_id,))
         otp = cur.fetchone()
         cur.close()
@@ -47,7 +47,7 @@ def validate_otp(user_id, input_otp):
     """Validasi OTP dan tandai sebagai digunakan"""
     try:
         cur = mysql.connection.cursor()
-        cur.execute("SELECT id, expires_at FROM otp_tokens WHERE user_id = %s AND otp_code = %s AND is_used = FALSE ORDER BY created_at DESC LIMIT 1",
+        cur.execute("SELECT id, expires_at FROM otp_tokens WHERE user_id = %s AND otp_code = %s AND is_used = FALSE ORDER BY id DESC LIMIT 1",
                     (user_id, input_otp))
         otp = cur.fetchone()
 
