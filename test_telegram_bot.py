@@ -10,4 +10,4 @@ if __name__ == '__main__':
     bot_thread.start()
 
     # Jalankan Flask di thread utama
-    app.run(debug=True, use_reloader=False)  # Jangan pakai reloader agar event loop tetap ada
+    app.run(debug=True, use_reloader=False)
