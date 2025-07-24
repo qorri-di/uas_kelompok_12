@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, session, flash
+from flask import Blueprint, render_template, request, redirect, session
 from app.services.telegram_service import send_telegram_otp
 from app.services.user_service import create_user, get_user_by_username, check_password
 from app.services.otp_service import generate_otp, otp_expiry, save_otp
@@ -16,7 +16,7 @@ def register():
         telegram_chat_id = request.form['telegram']
         create_user(username, email, phone, password, telegram_chat_id)
         return redirect('/')
-    return redirect('/register')
+    return render_template('register.html')
 
 
 @auth_bp.route('/', methods=['GET'])
@@ -37,7 +37,6 @@ def login_redirect():
             expires_at = otp_expiry()
 
             session['otp_user_id'] = user['id']
-            session['otp_expired'] = False
 
             save_otp(user['id'], otp, expires_at)
             send_telegram_otp(user['chat_id'], otp)
